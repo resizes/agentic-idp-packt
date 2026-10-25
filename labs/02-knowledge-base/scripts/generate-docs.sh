@@ -20,6 +20,8 @@ header() {
 rows() {
   local line
   while IFS= read -r line; do
+    # yq 4.45 prints "| " for every YAML document that does not match select.
+    [[ "$line" =~ ^\|[[:space:]]*$ ]] && continue
     [[ -n "$line" ]] && printf '%s\n' "$line"
   done
   return 0
