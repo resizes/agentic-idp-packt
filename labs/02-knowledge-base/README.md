@@ -11,12 +11,12 @@ Make the platform understandable to humans and agents from one source, and make 
 | Path | What it is |
 |---|---|
 | `scripts/generate-docs.sh` | Generates `kb/generated/` from the chart, apps, alerts, policies, and RBAC. |
-| `kb/generated/` | Generated reference. Never edited by hand. |
+| `kb/generated/` | Generated reference. Never edited by hand. Run the generator and commit the result with your change. |
 | `kb/guides/deploy-an-agent.md` | Hand-written guide. Lab 3 follows it to deploy Hermes. |
 | `runbooks/` | One runbook per alert, plus a template. Alerts link here through `runbook_url`. |
 | `llms.txt` | Machine-readable index of the knowledge base. |
 
-The repository-wide agent rules are in [`AGENTS.md`](../../AGENTS.md), and the CI check is [`.github/workflows/docs-freshness.yaml`](../../.github/workflows/docs-freshness.yaml).
+The repository-wide agent rules are in [`AGENTS.md`](../../AGENTS.md).
 
 ## What changes for agents
 

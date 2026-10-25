@@ -15,9 +15,7 @@ The service is `orders`, in the `shop` namespace. It stays with you for the whol
 | `platform/charts/service/` | The golden path Helm chart. Every app uses it, agents included. |
 | `platform/argocd/applicationset.yaml` | Creates one ArgoCD Application per `labs/*/apps/<name>/app.yaml`. Already registered in your environment. |
 | `apps/orders/` | The `orders` service: `app.yaml` (who and where) and `values.yaml` (what). Already deployed. |
-| `scripts/validate-apps.sh` | The CI validation. Prints one JSON line per app. |
-
-The CI workflow lives in [`.github/workflows/golden-path-ci.yaml`](../../.github/workflows/golden-path-ci.yaml).
+| `scripts/validate-apps.sh` | Prints one JSON line per app. Run it before you open a pull request. |
 
 ## What changes for agents
 
