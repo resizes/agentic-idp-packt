@@ -1,0 +1,40 @@
+name: docs-freshness
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  freshness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+
+      # Pinned to the version that generated the committed kb/generated/ docs.
+      # Bumping it changes the helm-docs footer, so regenerate the knowledge base
+      # in the same PR that bumps this version.
+      - name: Install helm-docs
+        run: go install github.com/norwoodj/helm-docs/cmd/helm-docs@v1.14.2
+
+      - name: Install yq
+        run: |
+          curl -fsSL -o /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.45.4/yq_linux_amd64
+          chmod +x /usr/local/bin/yq
+
+      - name: Regenerate the knowledge base
+        run: ./labs/02-knowledge-base/scripts/generate-docs.sh
+
+      - name: Fail if the knowledge base is stale
+        shell: bash
+        run: |
+          if [[ -n "$(git status --porcelain -- labs/02-knowledge-base/kb/generated)" ]]; then
+            git status --porcelain -- labs/02-knowledge-base/kb/generated
+            git diff -- labs/02-knowledge-base/kb/generated
+            echo "::error::The knowledge base is stale. Run ./labs/02-knowledge-base/scripts/generate-docs.sh and commit the result."
+            exit 1
+          fi

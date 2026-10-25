@@ -1,0 +1,40 @@
+name: repo-verify
+
+# Runs the local verification suite in CI: shell syntax, Python compile, helm
+# lint, knowledge-base determinism, and YAML parse. This is the safety net that
+# keeps a broken script or a stale knowledge base from reaching attendee
+# repositories.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+
+      # Pinned to the version that generated the committed kb/generated/ docs,
+      # matching docs-freshness.yaml.
+      - name: Install helm-docs
+        run: go install github.com/norwoodj/helm-docs/cmd/helm-docs@v1.14.2
+
+      - name: Install helm
+        run: |
+          curl -fsSL -o /tmp/helm.tgz https://get.helm.sh/helm-v3.17.3-linux-amd64.tar.gz
+          tar -xzf /tmp/helm.tgz -C /tmp
+          mv /tmp/linux-amd64/helm /usr/local/bin/helm
+          rm -rf /tmp/helm.tgz /tmp/linux-amd64
+
+      - name: Install yq
+        run: |
+          curl -fsSL -o /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.45.4/yq_linux_amd64
+          chmod +x /usr/local/bin/yq
+
+      - name: Run the verification suite
+        run: ./scripts/verify.sh
